@@ -24,25 +24,29 @@ die() {
   exit 1
 }
 
+purge_mysql_volumes() {
+  docker volume ls -q 2>/dev/null | grep -i klein | xargs -r docker volume rm -f 2>/dev/null || true
+}
+
 wait_mysql() {
-  say "Жду подключение к MySQL..."
+  say "Жду MySQL (healthy)..."
   for i in $(seq 1 60); do
-    if (cd "$INSTALL_DIR" && docker compose --profile http exec -T app php -r '
-      try {
-        $h=getenv("DB_HOST")?: "db";
-        $p=getenv("DB_PORT")?: "3306";
-        $u=getenv("DB_USER")?: "klein";
-        $w=getenv("DB_PASSWORD")?: "";
-        $n=getenv("DB_NAME")?: "kleinanzeigen_login";
-        new PDO("mysql:host=$h;port=$p;dbname=$n",$u,$w);
-        exit(0);
-      } catch (Throwable $e) { exit(1); }
-    ' 2>/dev/null); then
+    if (cd "$INSTALL_DIR" && docker compose --profile http ps db 2>/dev/null | grep -q '(healthy)'); then
+      break
+    fi
+    sleep 2
+    [[ "$i" -eq 60 ]] && die "MySQL не стал healthy"
+  done
+
+  say "Создаю/синхронизирую БД и пользователя..."
+  sleep 2
+  for i in $(seq 1 15); do
+    if (cd "$INSTALL_DIR" && docker compose --profile http exec -T app php scripts/ensure-db.php 2>&1); then
       return 0
     fi
     sleep 2
   done
-  die "MySQL не принимает пароль из .env (старый volume?)"
+  die "Не удалось создать пользователя БД (проверь DB_ROOT_PASSWORD в .env)"
 }
 
 # Docker
@@ -57,6 +61,7 @@ if [[ -d "$INSTALL_DIR" ]]; then
   (cd "$INSTALL_DIR" && docker compose --profile ssl down -v --remove-orphans 2>/dev/null || true)
 fi
 docker volume rm -f "$VOLUME_NAME" 2>/dev/null || true
+purge_mysql_volumes
 docker ps -aq --filter "name=klein-login" 2>/dev/null | xargs -r docker rm -f 2>/dev/null || true
 command -v fuser >/dev/null 2>&1 && fuser -k 80/tcp 2>/dev/null || true
 

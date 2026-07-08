@@ -22,26 +22,19 @@ if (!$is_cli) {
 
 $say = function (string $s) { echo $s . "\n"; };
 
+// Синхронизируем БД/пользователя с .env (важно при старом Docker volume)
+$ensure = __DIR__ . '/scripts/ensure-db.php';
+if (is_file($ensure)) {
+    require $ensure;
+}
+
 // Универсальный раннер DDL/DML без параметров (обходит привычный exec)
 $run_sql = function (PDO $pdo, string $stmt) {
     $st = $pdo->prepare($stmt);
     $st->execute();
 };
 
-// 1. Создаём БД (если ещё нет)
-try {
-    $c = $CONFIG['db'];
-    $dsn = "mysql:host={$c['host']};port={$c['port']};charset={$c['charset']}";
-    $rootUser = getenv('DB_ROOT_PASSWORD') !== false ? 'root' : $c['user'];
-    $rootPass = getenv('DB_ROOT_PASSWORD') !== false ? (string)getenv('DB_ROOT_PASSWORD') : $c['password'];
-    $root = new PDO($dsn, $rootUser, $rootPass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $run_sql($root, "CREATE DATABASE IF NOT EXISTS `{$c['name']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $say("[ok] database `{$c['name']}` ready");
-} catch (Throwable $e) {
-    $say('[!] could not create database: ' . $e->getMessage() . ' (continuing, will try existing)');
-}
-
-// 2. Прогоняем schema.sql
+// 1. Прогоняем schema.sql
 $sql = file_get_contents(__DIR__ . '/db/schema.sql');
 $pdo = db();
 foreach (array_filter(array_map('trim', explode(';', (string)$sql))) as $stmt) {

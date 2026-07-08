@@ -28,8 +28,8 @@ fi
 
 # Остановить ВСЕ старые контейнеры
 if [[ -d "$INSTALL_DIR" ]]; then
-  (cd "$INSTALL_DIR" && docker compose --profile http down --remove-orphans 2>/dev/null || true)
-  (cd "$INSTALL_DIR" && docker compose --profile ssl down --remove-orphans 2>/dev/null || true)
+  (cd "$INSTALL_DIR" && docker compose --profile http down -v --remove-orphans 2>/dev/null || true)
+  (cd "$INSTALL_DIR" && docker compose --profile ssl down -v --remove-orphans 2>/dev/null || true)
 fi
 docker ps -aq --filter "name=klein-login" 2>/dev/null | xargs -r docker rm -f 2>/dev/null || true
 

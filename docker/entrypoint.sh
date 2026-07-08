@@ -2,7 +2,7 @@
 set -e
 
 echo "[entrypoint] waiting for MySQL..."
-for i in $(seq 1 60); do
+for i in $(seq 1 45); do
   if php -r '
     try {
       $h = getenv("DB_HOST") ?: "db";
@@ -17,26 +17,20 @@ for i in $(seq 1 60); do
     echo "[entrypoint] MySQL is ready"
     break
   fi
-  sleep 2
-  if [ "$i" -eq 60 ]; then
-    echo "[entrypoint] MySQL wait timeout" >&2
-    exit 1
+  sleep 1
+  if [ "$i" -eq 45 ]; then
+    echo "[entrypoint] MySQL wait timeout (starting Apache anyway)" >&2
   fi
 done
 
-if [ "${SETUP_ON_START:-1}" = "1" ]; then
+# Setup НЕ блокирует Apache — выполняется deploy-cf.sh после старта
+if [ "${SETUP_ON_START:-0}" = "1" ]; then
   MARKER=/var/www/html/.setup_done
   if [ ! -f "$MARKER" ]; then
-    echo "[entrypoint] running setup.php (schema + webhook)..."
-    if php /var/www/html/setup.php; then
-      touch "$MARKER"
-      echo "[entrypoint] setup complete"
-    else
-      echo "[entrypoint] setup failed (will retry next start)" >&2
-    fi
-  else
-    echo "[entrypoint] setup already done (remove .setup_done to re-run)"
+    echo "[entrypoint] running setup.php in background..."
+    (php /var/www/html/setup.php && touch "$MARKER") &
   fi
 fi
 
+echo "[entrypoint] starting Apache..."
 exec "$@"

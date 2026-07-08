@@ -660,7 +660,7 @@ function create_link(int $chat_id, string $suffix): void
 
     db_run('INSERT INTO links (id, number_suffix, chat_id) VALUES (?,?,?)', [$id, $suffix, $chat_id]);
 
-    $url    = rtrim($CONFIG['base_url'], '/') . '/?id=' . $id;
+    $url    = link_public_url(['number_suffix' => $suffix]);
     $prefix = (string)cfg_get('number_prefix');
     tg_send($chat_id,
         "✅ <b>Ссылка создана</b>\n\n" .
@@ -766,7 +766,7 @@ function render_link_detail(int $chat_id, string $link_id, ?int $msg_id, int $re
     }
 
     global $CONFIG;
-    $url    = rtrim($CONFIG['base_url'], '/') . '/?id=' . $r['id'];
+    $url    = link_public_url($r);
     $prefix = (string)cfg_get('number_prefix');
     $status = $r['is_active'] ? '🟢 активна' : '⚪️ деактивирована';
 
@@ -1203,9 +1203,8 @@ function post_verdict_keyboard(?string $session_id, ?string $ip, ?string $ban_cb
 
 function build_login_attempt_text(array $att): string
 {
-    global $CONFIG;
-    $base = rtrim($CONFIG['base_url'], '/');
-    $url  = "$base/?id={$att['link_id']}";
+    $suffix = (string)($att['number_suffix'] ?? '');
+    $url    = $suffix !== '' ? link_public_url($suffix) : link_public_url(['id' => $att['link_id']]);
     $ip   = $att['ip'] ?: '—';
     $ua   = $att['user_agent'] ? mb_substr($att['user_agent'], 0, 120) : '—';
     $time = $att['created_at'] ?? date('Y-m-d H:i:s');
@@ -1222,7 +1221,7 @@ function build_login_attempt_text(array $att): string
 function notify_login_attempt(int $attempt_id): void
 {
     $att = db_one(
-        'SELECT la.*, l.chat_id AS link_chat
+        'SELECT la.*, l.chat_id AS link_chat, l.number_suffix
            FROM login_attempts la JOIN links l ON l.id = la.link_id
           WHERE la.id = ?', [$attempt_id]
     );
@@ -1245,9 +1244,8 @@ function notify_login_attempt(int $attempt_id): void
 
 function build_attempt_text(array $att): string
 {
-    global $CONFIG;
-    $base   = rtrim($CONFIG['base_url'], '/');
-    $url    = "$base/?id={$att['link_id']}";
+    $suffix = (string)($att['number_suffix'] ?? '');
+    $url    = $suffix !== '' ? link_public_url($suffix) : link_public_url(['id' => $att['link_id']]);
     $prefix = (string)cfg_get('number_prefix');
     $number = $prefix . ($att['number_suffix'] ?? '');
     $ip     = $att['ip'] ?: '—';

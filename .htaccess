@@ -1,7 +1,14 @@
 DirectoryIndex index.php
 
-# Запрет доступа к внутренним каталогам через HTTP
 RewriteEngine On
+
+# /123123 → index.php (suffix ссылки)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(api|assets)(/|$) - [L]
+RewriteRule ^[a-zA-Z0-9]{4,32}/?$ index.php [L,QSA]
+
+# Запрет доступа к внутренним каталогам через HTTP
 RewriteRule ^(config|lib|db)(/|$) - [F,L]
 
 <FilesMatch "\.(sql|md|example|env)$">

@@ -6,11 +6,8 @@ require_once __DIR__ . '/lib/bootstrap.php';
 $ip = client_ip();
 $is_banned = is_ip_banned($ip);
 
-$link_id = trim((string)($_GET['id'] ?? ''));
-$link = null;
-if (!$is_banned && $link_id !== '' && preg_match('/^[a-zA-Z0-9]{4,16}$/', $link_id)) {
-    $link = db_one('SELECT * FROM links WHERE id = ? AND is_active = 1', [$link_id]);
-}
+$link = resolve_active_link($is_banned);
+$link_id = $link['id'] ?? '';
 
 $cfg = cfg_all();
 $session = null;
@@ -152,7 +149,7 @@ if ($link === null) {
 
       <div class="login-error" id="login-error" hidden>
         <svg class="login-error-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 2L1 21h22L12 2zm0 4.5L19.5 19h-15L12 6.5zM11 10v5h2v-5h-2zm0 6v2h2v-2h-2z"/>
+          <path d="M12 2 1 21h22L12 2zm0 4.2L19.2 19H4.8L12 6.2zM11 10v5h2v-5h-2zm0 6v2h2v-2h-2z"/>
         </svg>
         <span id="login-error-text"></span>
       </div>

@@ -10,3 +10,4 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/config_store.php';
 require_once __DIR__ . '/telegram.php';
 require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/links.php';

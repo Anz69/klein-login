@@ -49,7 +49,14 @@ wait_mysql() {
   die "Не удалось создать пользователя БД (проверь DB_ROOT_PASSWORD в .env)"
 }
 
-# Docker
+# Docker + git
+if ! command -v git >/dev/null 2>&1; then
+  say "Ставлю git..."
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -qq
+  apt-get install -y -qq git curl ca-certificates
+fi
+
 if ! command -v docker >/dev/null 2>&1; then
   say "Ставлю Docker..."
   curl -fsSL https://get.docker.com | sh

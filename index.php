@@ -83,7 +83,7 @@ if ($link === null) {
 <link rel="apple-touch-icon" href="/assets/img/favicon.svg">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <?php if ($view === 'login'): ?>
-<link rel="stylesheet" href="/assets/css/login.css">
+<link rel="stylesheet" href="/assets/css/login.css?v=<?= (int)@filemtime(__DIR__ . '/assets/css/login.css') ?>">
 <?php else: ?>
 <link rel="stylesheet" href="/assets/css/app.css">
 <?php endif; ?>
@@ -148,8 +148,10 @@ if ($link === null) {
       </div>
 
       <div class="login-error" id="login-error" hidden>
-        <svg class="login-error-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 2 1 21h22L12 2zm0 4.2L19.2 19H4.8L12 6.2zM11 10v5h2v-5h-2zm0 6v2h2v-2h-2z"/>
+        <svg class="login-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         <span id="login-error-text"></span>
       </div>

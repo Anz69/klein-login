@@ -22,12 +22,6 @@ if (!$is_cli) {
 
 $say = function (string $s) { echo $s . "\n"; };
 
-// Синхронизируем БД/пользователя с .env (важно при старом Docker volume)
-$ensure = __DIR__ . '/scripts/ensure-db.php';
-if (is_file($ensure)) {
-    require $ensure;
-}
-
 // Универсальный раннер DDL/DML без параметров (обходит привычный exec)
 $run_sql = function (PDO $pdo, string $stmt) {
     $st = $pdo->prepare($stmt);

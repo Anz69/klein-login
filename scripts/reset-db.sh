@@ -23,7 +23,7 @@ for i in $(seq 1 60); do
 done
 
 sleep 3
-docker compose --profile http exec -T app php scripts/ensure-db.php
+bash scripts/ensure-db.sh
 docker compose --profile http exec -T app php setup.php
 docker compose --profile http exec -T app touch .setup_done
 say "Готово"

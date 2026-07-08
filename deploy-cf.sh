@@ -41,7 +41,7 @@ wait_mysql() {
   say "Создаю/синхронизирую БД и пользователя..."
   sleep 2
   for i in $(seq 1 15); do
-    if (cd "$INSTALL_DIR" && docker compose --profile http exec -T app php scripts/ensure-db.php 2>&1); then
+    if (cd "$INSTALL_DIR" && bash scripts/ensure-db.sh 2>&1); then
       return 0
     fi
     sleep 2

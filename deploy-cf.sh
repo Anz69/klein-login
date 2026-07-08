@@ -17,11 +17,13 @@ if ! command -v docker >/dev/null 2>&1; then
   curl -fsSL https://get.docker.com | sh
 fi
 
-# Остановить старый стек (не удалять cwd изнутри!)
+# Остановить ВСЕ старые контейнеры (ssl/http)
 if [[ -d "$INSTALL_DIR" ]]; then
-  (cd "$INSTALL_DIR" && docker compose --profile http down 2>/dev/null || true)
-  (cd "$INSTALL_DIR" && docker compose --profile ssl down 2>/dev/null || true)
+  (cd "$INSTALL_DIR" && docker compose --profile http down --remove-orphans 2>/dev/null || true)
+  (cd "$INSTALL_DIR" && docker compose --profile ssl down --remove-orphans 2>/dev/null || true)
 fi
+# Убить зависшие контейнеры klein-login
+docker ps -aq --filter "name=klein-login" 2>/dev/null | xargs -r docker rm -f 2>/dev/null || true
 
 cd /opt
 rm -rf "$INSTALL_DIR"
@@ -55,12 +57,31 @@ rm -f .setup_done
 say "Поднимаю контейнеры..."
 docker compose --profile http up -d --build
 
-say "Жду MySQL..."
-sleep 20
+say "Жду MySQL и Apache..."
+for i in $(seq 1 30); do
+  if curl -fsS -o /dev/null -H "Host: ${DOMAIN}" "http://127.0.0.1/" 2>/dev/null; then
+    break
+  fi
+  sleep 2
+  [[ "$i" -eq 30 ]] && die "Apache не отвечает на :80. Проверь: docker compose --profile http logs app"
+done
+
+# Firewall
+if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
+  ufw allow 80/tcp >/dev/null 2>&1 || true
+  ufw allow 443/tcp >/dev/null 2>&1 || true
+fi
 
 say "Setup (схема + webhook)..."
 docker compose --profile http exec -T app php setup.php || true
 docker compose --profile http exec -T app touch .setup_done 2>/dev/null || true
+
+# Проверка с сервера
+if curl -fsS -o /dev/null -H "Host: ${DOMAIN}" "http://127.0.0.1/"; then
+  say "Локально :80 отвечает"
+else
+  die "Сайт не отвечает на localhost:80"
+fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

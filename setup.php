@@ -32,7 +32,9 @@ $run_sql = function (PDO $pdo, string $stmt) {
 try {
     $c = $CONFIG['db'];
     $dsn = "mysql:host={$c['host']};port={$c['port']};charset={$c['charset']}";
-    $root = new PDO($dsn, $c['user'], $c['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $rootUser = getenv('DB_ROOT_PASSWORD') !== false ? 'root' : $c['user'];
+    $rootPass = getenv('DB_ROOT_PASSWORD') !== false ? (string)getenv('DB_ROOT_PASSWORD') : $c['password'];
+    $root = new PDO($dsn, $rootUser, $rootPass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     $run_sql($root, "CREATE DATABASE IF NOT EXISTS `{$c['name']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $say("[ok] database `{$c['name']}` ready");
 } catch (Throwable $e) {

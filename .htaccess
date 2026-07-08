@@ -1,0 +1,18 @@
+DirectoryIndex index.php
+
+# Запрет доступа к внутренним каталогам через HTTP
+RewriteEngine On
+RewriteRule ^(config|lib|db)(/|$) - [F,L]
+
+<FilesMatch "\.(sql|md|example|env)$">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^(\.env|\.setup_done|install\.sh|webhook\.sh|docker-compose\.yml)">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

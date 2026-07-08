@@ -1,0 +1,6 @@
+.env
+.setup_done
+.git
+.gitignore
+*.md
+tests/

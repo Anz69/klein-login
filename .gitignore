@@ -1,0 +1,6 @@
+.env
+.setup_done
+*.zip
+.DS_Store
+vendor/
+node_modules/

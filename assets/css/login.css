@@ -6,15 +6,15 @@
   --kl-brand:       #1d4b00;
   --kl-link:        #32691f;
   --kl-green:       #2d7a2c;
-  --kl-lime:        #bfe527;
-  --kl-lime-hover:  #b3d923;
-  --kl-btn-text:    #1a3f00;
-  --kl-text:        #111111;
-  --kl-text-soft:   #2b2f33;
+  --kl-lime:        #b9e135;
+  --kl-lime-hover:  #a8cc2c;
+  --kl-btn-text:    #0f1112;
+  --kl-text:        #0f1112;
+  --kl-text-soft:   #2a2f38;
   --kl-muted:       #8a9199;
-  --kl-line:        #d2d5da;
+  --kl-line:        #e6e7eb;
   --kl-line-soft:   #eeeff2;
-  --kl-bg:          #f3f3f3;
+  --kl-bg:          #ffffff;
   --kl-error:       #c8102e;
 }
 
@@ -50,7 +50,7 @@ a:hover { color: var(--kl-brand); }
   height: 64px;
   padding: 0 20px;
   background: #fff;
-  border-bottom: 1px solid var(--kl-line-soft);
+  border-bottom: 1px solid var(--kl-line);
 }
 
 .login-header .header-back {
@@ -95,16 +95,18 @@ a:hover { color: var(--kl-brand); }
 .login-main {
   display: flex;
   justify-content: center;
-  padding: 48px 16px 56px;
+  padding: 56px 24px 80px;
+  background: #fff;
 }
 
 .login-card {
   width: 100%;
   max-width: 460px;
   background: #fff;
-  border-radius: 8px;
-  padding: 32px 32px 28px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--kl-line);
+  border-radius: 18px;
+  padding: 36px 36px 30px;
+  box-shadow: 0 1px 2px rgba(15, 18, 22, 0.03);
   align-self: flex-start;
 }
 
@@ -238,15 +240,11 @@ a:hover { color: var(--kl-brand); }
   cursor: pointer;
   transition: background-color 140ms ease;
   background: var(--kl-lime);
-  color: #fff;
+  color: var(--kl-btn-text);
 }
 .login-btn:hover:not(:disabled) { background: var(--kl-lime-hover); }
 .login-btn:disabled { cursor: progress; opacity: 0.9; }
 .login-btn.is-loading .login-btn-label { opacity: 0.65; }
-
-.login-btn--submit {
-  color: var(--kl-btn-text);
-}
 
 .login-btn-spinner {
   display: none;
@@ -256,14 +254,10 @@ a:hover { color: var(--kl-brand); }
   width: 16px;
   height: 16px;
   margin-top: -8px;
-  border: 2.5px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #fff;
+  border: 2.5px solid rgba(15, 17, 18, 0.15);
+  border-top-color: var(--kl-btn-text);
   border-radius: 50%;
   animation: login-spin 0.75s linear infinite;
-}
-.login-btn--submit .login-btn-spinner {
-  border-color: rgba(26, 63, 0, 0.2);
-  border-top-color: var(--kl-btn-text);
 }
 .login-btn.is-loading .login-btn-spinner { display: block; }
 @keyframes login-spin { to { transform: rotate(360deg); } }
@@ -281,7 +275,7 @@ a:hover { color: var(--kl-brand); }
 
 @media (max-width: 520px) {
   .login-header.page-header { height: 56px; padding: 0 12px; }
-  .login-main { padding: 32px 16px 40px; }
-  .login-card { max-width: none; padding: 28px 22px 24px; }
+  .login-main { padding: 40px 16px 56px; }
+  .login-card { max-width: none; padding: 28px 22px 24px; border-radius: 14px; }
   .login-title { font-size: 20px; }
 }

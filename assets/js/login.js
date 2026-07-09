@@ -60,12 +60,10 @@
 
   function setEmailStep() {
     loginBtnLabel.textContent = cfg.login_button_continue || 'Weiter';
-    loginBtn.classList.remove('login-btn--submit');
   }
 
   function setPasswordStepUi() {
     loginBtnLabel.textContent = cfg.login_button || 'Einloggen';
-    loginBtn.classList.add('login-btn--submit');
   }
 
   function hideError() {

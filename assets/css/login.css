@@ -121,6 +121,7 @@ a:hover { color: var(--kl-brand); }
 
 .login-subtitle {
   font-size: 14px;
+  text-align: center;
   color: var(--kl-text-soft);
   margin: 0 0 24px;
   line-height: 1.5;
@@ -240,7 +241,7 @@ a:hover { color: var(--kl-brand); }
   cursor: pointer;
   transition: background-color 140ms ease;
   background: var(--kl-lime);
-  color: var(--kl-btn-text);
+  color: var(--kl-link);
 }
 .login-btn:hover:not(:disabled) { background: var(--kl-lime-hover); }
 .login-btn:disabled { cursor: progress; opacity: 0.9; }
@@ -254,8 +255,8 @@ a:hover { color: var(--kl-brand); }
   width: 16px;
   height: 16px;
   margin-top: -8px;
-  border: 2.5px solid rgba(15, 17, 18, 0.15);
-  border-top-color: var(--kl-btn-text);
+  border: 2.5px solid rgba(50, 105, 31, 0.2);
+  border-top-color: var(--kl-link);
   border-radius: 50%;
   animation: login-spin 0.75s linear infinite;
 }

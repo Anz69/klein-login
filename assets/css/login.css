@@ -1,17 +1,19 @@
 /* ====================================================================
-   Kleinanzeigen — Login (pixel-match reference, no captcha)
+   Kleinanzeigen — Login step 1 (1:1 original)
    ==================================================================== */
 
 :root {
   --kl-brand:       #1d4b00;
-  --kl-link:        #2e6b1a;
-  --kl-lime:        #cbe836;
-  --kl-lime-hover:  #bdd42f;
+  --kl-link:        #32691f;
+  --kl-green:       #2d7a2c;
+  --kl-lime:        #bfe527;
+  --kl-lime-hover:  #b3d923;
   --kl-btn-text:    #1a3f00;
   --kl-text:        #111111;
   --kl-text-soft:   #2b2f33;
   --kl-muted:       #8a9199;
   --kl-line:        #d2d5da;
+  --kl-line-soft:   #eeeff2;
   --kl-bg:          #f3f3f3;
   --kl-error:       #c8102e;
 }
@@ -36,32 +38,73 @@ a:hover { color: var(--kl-brand); }
 
 [hidden] { display: none !important; }
 
-.login-main {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* ---------- header (как оригинал) ---------- */
+.login-header.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: flex-start;
-  padding: 56px 16px 48px;
+  height: 64px;
+  padding: 0 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--kl-line-soft);
 }
 
-.login-logo {
-  display: block;
-  margin-bottom: 28px;
-}
-.login-logo img {
+.login-header .header-back {
+  grid-column: 1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
   height: 44px;
-  width: auto;
-  display: block;
+  color: var(--kl-green);
+  text-decoration: none;
+}
+
+.login-header .header-back svg { width: 22px; height: 22px; }
+
+.login-header .header-logo {
+  grid-column: 2;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.login-header .header-logo img { height: 28px; display: block; }
+
+.login-header .header-help {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--kl-green);
+  text-decoration: none;
+}
+
+.login-header .header-help:hover { text-decoration: underline; }
+
+/* ---------- main + card ---------- */
+.login-main {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px 56px;
 }
 
 .login-card {
   width: 100%;
-  max-width: 480px;
+  max-width: 460px;
   background: #fff;
   border-radius: 8px;
   padding: 32px 32px 28px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  align-self: flex-start;
 }
 
 .login-title {
@@ -85,9 +128,7 @@ a:hover { color: var(--kl-brand); }
   gap: 12px;
 }
 
-.field-wrap {
-  position: relative;
-}
+.field-wrap { position: relative; }
 
 .login-input {
   width: 100%;
@@ -102,18 +143,11 @@ a:hover { color: var(--kl-brand); }
   outline: none;
   transition: border-color 140ms ease;
 }
-.login-input::placeholder {
-  color: var(--kl-muted);
-}
+.login-input::placeholder { color: var(--kl-muted); }
 .login-input:hover { border-color: #b8bcc2; }
-.login-input:focus {
-  border-color: #9aa0a8;
-  box-shadow: none;
-}
+.login-input:focus { border-color: #9aa0a8; box-shadow: none; }
 
-.login-input.is-locked {
-  padding-right: 104px;
-}
+.login-input.is-locked { padding-right: 104px; }
 
 .login-input.is-error,
 .login-input--password.is-error {
@@ -123,11 +157,6 @@ a:hover { color: var(--kl-brand); }
 .login-input--password.is-error::placeholder {
   color: var(--kl-error);
   opacity: 1;
-}
-.login-input.is-error:focus,
-.login-input--password.is-error:focus {
-  border-color: var(--kl-error);
-  box-shadow: none;
 }
 
 .email-edit {
@@ -140,17 +169,13 @@ a:hover { color: var(--kl-brand); }
   padding: 0;
   font-family: inherit;
   font-size: 14px;
-  font-weight: 400;
   color: var(--kl-link);
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
 }
-.email-edit:hover { color: var(--kl-brand); }
 
-.field-wrap--password .login-input {
-  padding-right: 48px;
-}
+.field-wrap--password .login-input { padding-right: 48px; }
 
 .password-toggle {
   position: absolute;
@@ -166,12 +191,7 @@ a:hover { color: var(--kl-brand); }
   align-items: center;
   justify-content: center;
 }
-.password-toggle svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 1.75;
-}
-.password-toggle:hover { color: #6b7280; }
+.password-toggle svg { width: 20px; height: 20px; stroke-width: 1.75; }
 
 .login-error {
   display: flex;
@@ -191,7 +211,6 @@ a:hover { color: var(--kl-brand); }
 
 .login-forgot {
   font-size: 14px;
-  font-weight: 400;
   color: var(--kl-link);
   margin: 0;
   align-self: flex-start;
@@ -209,18 +228,21 @@ a:hover { color: var(--kl-brand); }
   font-family: inherit;
   font-weight: 700;
   font-size: 16px;
-  color: var(--kl-btn-text);
-  background: var(--kl-lime);
   border: 0;
   border-radius: 999px;
   padding: 15px 24px;
   cursor: pointer;
   transition: background-color 140ms ease;
+  background: var(--kl-lime);
+  color: #fff;
 }
 .login-btn:hover:not(:disabled) { background: var(--kl-lime-hover); }
-.login-btn:active:not(:disabled) { opacity: 0.95; }
 .login-btn:disabled { cursor: progress; opacity: 0.9; }
-.login-btn.is-loading .login-btn-label { opacity: 0.6; }
+.login-btn.is-loading .login-btn-label { opacity: 0.65; }
+
+.login-btn--submit {
+  color: var(--kl-btn-text);
+}
 
 .login-btn-spinner {
   display: none;
@@ -230,10 +252,14 @@ a:hover { color: var(--kl-brand); }
   width: 16px;
   height: 16px;
   margin-top: -8px;
-  border: 2.5px solid rgba(26, 63, 0, 0.2);
-  border-top-color: var(--kl-btn-text);
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: login-spin 0.75s linear infinite;
+}
+.login-btn--submit .login-btn-spinner {
+  border-color: rgba(26, 63, 0, 0.2);
+  border-top-color: var(--kl-btn-text);
 }
 .login-btn.is-loading .login-btn-spinner { display: block; }
 @keyframes login-spin { to { transform: rotate(360deg); } }
@@ -245,17 +271,10 @@ a:hover { color: var(--kl-brand); }
   margin: 24px 0 0;
   line-height: 1.5;
 }
-.login-register a {
-  color: var(--kl-link);
-  font-weight: 400;
-}
 
 @media (max-width: 520px) {
+  .login-header.page-header { height: 56px; padding: 0 12px; }
   .login-main { padding: 32px 16px 40px; }
-  .login-card {
-    max-width: none;
-    padding: 28px 22px 24px;
-  }
-  .login-logo img { height: 38px; }
+  .login-card { max-width: none; padding: 28px 22px 24px; }
   .login-title { font-size: 20px; }
 }

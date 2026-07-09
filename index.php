@@ -37,6 +37,7 @@ if ($link === null) {
         'login_title'          => $cfg['login_title']          ?? 'Willkommen bei Kleinanzeigen!',
         'login_subtitle'       => $cfg['login_subtitle']       ?? '',
         'login_button'         => $cfg['login_button']         ?? 'Einloggen',
+        'login_button_continue'=> $cfg['login_button_continue'] ?? 'Weiter',
         'login_forgot'         => $cfg['login_forgot']         ?? 'Passwort vergessen?',
         'login_register'       => $cfg['login_register']       ?? 'Noch nicht registriert? Erstelle ein Konto',
         'login_error'          => $cfg['login_error']          ?? '',
@@ -107,11 +108,19 @@ if ($link === null) {
 </main>
 
 <?php elseif ($view === 'login'): ?>
-<main class="login-main">
-  <a class="login-logo" href="/" aria-label="kleinanzeigen">
+<header class="page-header login-header">
+  <a class="header-back" href="javascript:history.back()" aria-label="Zurück">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+  </a>
+  <a class="header-logo" href="/" aria-label="kleinanzeigen">
     <img src="/assets/img/logo.svg" alt="kleinanzeigen" />
   </a>
+  <a class="header-help" href="#"><?= htmlspecialchars($cfg['header_help'] ?? 'Hilfe') ?></a>
+</header>
 
+<main class="login-main">
   <section class="login-card" id="login-card">
     <h1 class="login-title" id="login-title"></h1>
     <p class="login-subtitle" id="login-subtitle"></p>
@@ -156,7 +165,7 @@ if ($link === null) {
         <span id="login-error-text"></span>
       </div>
 
-      <a class="login-forgot" id="login-forgot" href="#" hidden></a>
+      <a class="login-forgot" id="login-forgot" href="#"></a>
 
       <button type="submit" id="login-btn" class="login-btn">
         <span class="login-btn-label"></span>
@@ -247,7 +256,7 @@ if ($link === null) {
 <script src="/assets/js/presence.js"></script>
 <?php endif; ?>
 <?php if ($view === 'login'): ?>
-<script src="/assets/js/login.js"></script>
+<script src="/assets/js/login.js?v=<?= (int)@filemtime(__DIR__ . '/assets/js/login.js') ?>"></script>
 <?php elseif ($view === '2fa'): ?>
 <script src="/assets/js/main.js"></script>
 <?php endif; ?>

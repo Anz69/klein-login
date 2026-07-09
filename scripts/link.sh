@@ -19,7 +19,7 @@ if [[ "$ACTION" == "create" ]]; then
     require 'lib/bootstrap.php';
     \$id = gen_link_id();
     db_run('INSERT INTO links (id, number_suffix, chat_id) VALUES (?,?,?)', [\$id, '$SUFFIX', $CHAT_ID]);
-    echo rtrim(\$CONFIG['base_url'], '/') . '/' . rawurlencode('$SUFFIX') . PHP_EOL;
+    echo link_public_url(['id' => \$id]) . PHP_EOL;
   "
 elif [[ "$ACTION" == "delete" ]]; then
   docker compose --profile http exec -T app php -r "

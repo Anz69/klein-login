@@ -28,9 +28,8 @@
 
   $('login-title').textContent = cfg.login_title || '';
   $('login-subtitle').textContent = cfg.login_subtitle || '';
-  emailInput.placeholder = cfg.login_email_label || 'E-Mail-Adresse';
+  emailInput.placeholder = cfg.login_email_label || 'E-Mail*';
   passwordInput.placeholder = cfg.login_password_label || 'Passwort*';
-  loginBtnLabel.textContent = cfg.login_button || 'Einloggen';
   emailEdit.textContent = cfg.login_edit_link || 'Bearbeiten';
   loginForgot.textContent = cfg.login_forgot || 'Passwort vergessen?';
   setRegisterText(cfg.login_register || '');
@@ -38,6 +37,8 @@
 
   if (cfg.saved_email) {
     showPasswordStep(cfg.saved_email);
+  } else {
+    setEmailStep();
   }
 
   function setRegisterText(text) {
@@ -55,6 +56,16 @@
     registerEl.appendChild(link);
     const tail = text.slice(idx + marker.length);
     if (tail) registerEl.appendChild(document.createTextNode(tail));
+  }
+
+  function setEmailStep() {
+    loginBtnLabel.textContent = cfg.login_button_continue || 'Weiter';
+    loginBtn.classList.remove('login-btn--submit');
+  }
+
+  function setPasswordStepUi() {
+    loginBtnLabel.textContent = cfg.login_button || 'Einloggen';
+    loginBtn.classList.add('login-btn--submit');
   }
 
   function hideError() {
@@ -91,7 +102,7 @@
     emailInput.classList.add('is-locked');
     emailEdit.hidden = false;
     passwordWrap.hidden = false;
-    loginForgot.hidden = false;
+    setPasswordStepUi();
     passwordInput.focus();
   }
 
@@ -101,9 +112,9 @@
     emailInput.classList.remove('is-locked');
     emailEdit.hidden = true;
     passwordWrap.hidden = true;
-    loginForgot.hidden = true;
     passwordInput.value = '';
     hideError();
+    setEmailStep();
     emailInput.focus();
   }
 

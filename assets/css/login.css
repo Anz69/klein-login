@@ -113,6 +113,7 @@ a:hover { color: var(--kl-brand); }
   margin: 0 0 10px;
   color: var(--kl-text);
   line-height: 1.3;
+  text-align: center;
 }
 
 .login-subtitle {
@@ -265,11 +266,14 @@ a:hover { color: var(--kl-brand); }
 @keyframes login-spin { to { transform: rotate(360deg); } }
 
 .login-register {
-  text-align: center;
+  text-align: left;
   font-size: 14px;
   color: var(--kl-text-soft);
   margin: 24px 0 0;
   line-height: 1.5;
+}
+.login-register a {
+  font-weight: 600;
 }
 
 @media (max-width: 520px) {
